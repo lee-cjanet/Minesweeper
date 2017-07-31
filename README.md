@@ -1,9 +1,3 @@
-MVP Features
-Technologies
-Wireframes
-Timeline
-
-
 # Minesweeper
 
 # Background
@@ -21,3 +15,17 @@ Minesweeper is a game of both chance and logic. The player begins by clicking an
 
 - Easel.js with HTML5 Canvas for DOM manipulation and rendering
 - Bootstrap to compile CSS & Javascript
+
+# Wireframes
+https://drive.google.com/file/d/0B7E9A_8LIjyWRXdfZmVCMzNaYm8/view?usp=sharing
+
+# Timeline
+
+Day1: Set up webpack & npm install all libraries needed. Read up on Canvas, Easel and Bootstrap. Build out the logic of minesweeper
+
+Day2: Finish all backend game logic.
+
+
+Day3: Dedicate this day to CSS
+
+Day4: fix all bugs and write out production readme

@@ -80,7 +80,7 @@ class Board {
     for (let row=0; grid.length < size; row++) {
       grid.push([]);
       for (let col=0; grid[row].length < size; col++) {
-        grid[row].push({});
+        grid[row].push({revealed: false, bomb: false, flagged: false, marked: false});
       }
     }
     return grid;

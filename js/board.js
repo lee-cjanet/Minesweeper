@@ -32,9 +32,9 @@ class Board {
     } else {
       this.bombs = 10;
     }
-
-    this.grid = Board.makeGrid(size);
-    this.setBombs();
+    console.log("h1");
+    this.grid = this.makeGrid(size);
+    console.log(this.grid);
   }
 
   compareArr(nestedArr, arr2) {
@@ -59,22 +59,16 @@ class Board {
     return locations;
   }
 
-
-
-  makeGrid(size) {
-    const grid = [];
-
-    for (let row=0; grid.length === size; row++) {
-      grid.push(new Array());
-      for (let col=0; grid.length === size; col++) {
-        grid[row].push({});
-      }
-    }
+  setBombs(grid) {
+    console.log("h3");
+    this.generateBombLocations().map(function(pos) {
+      grid[pos[0]][pos[1]].bomb = true;
+    });
+    console.log(grid);
     return grid;
   }
 
-
-  function makeGrid(size) {
+  makeGrid(size) {
     let grid = [];
 
     for (let row=0; grid.length < size; row++) {
@@ -83,26 +77,22 @@ class Board {
         grid[row].push({revealed: false, bomb: false, flagged: false, marked: false});
       }
     }
-    return grid;
+    console.log("h2");
+    return this.setBombs(grid);
   }
 
 
 
-  setBombs() {
-    this.generateBombLocations().map(function(pos) {
-      this.grid[pos[0]][pos[1]] = 'x';
-    });
-  }
 
   won() {
-    let count = 0
+    let count = 0;
     let merged = [].concat.apply([], this.grid);
     merged.forEach(function(pos) {
       if (pos === true) {
-        count += 1
+        count += 1;
       }
-    })
-    return ((this.size * this.size) - this.bombs == count)
+    });
+    return ((this.size * this.size) - this.bombs === count);
   }
 
 }

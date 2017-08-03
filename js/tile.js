@@ -43,7 +43,7 @@ class Tile {
     let count = 0;
 
     NEIGHBORS.forEach(function(neighbor) {
-      neighbor
+      neighbor;
     })
   }
 
@@ -51,4 +51,4 @@ class Tile {
 
 }
 
-export default Rules;
+export default Tile;

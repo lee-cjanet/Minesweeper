@@ -16,39 +16,39 @@ import Board from './board';
 // let game = new Game()
 // $easyButton.addEventLIstener('click', () => game.start('easy'));
 
-const DIFFICULTY = {'beginner': 8, 'intermediate': 16, 'difficult':24}
+const DIFFICULTY = {'beginner': 8, 'intermediate': 16, 'difficult':24};
 
 class Game {
   constructor(level = 'beginner') {
+    console.log(DIFFICULTY[level]);
     this.level = level;
     this.board = new Board(DIFFICULTY[level]);
 
-    this.pos = props.move
   }
 
-  play() {
-    while (!(isOver()) || !(isWon()))
-    console.log(this.board.render)
+  // play() {
+  //   while (!(isOver()) || !(isWon()))
+  //   console.log(this.board.render)
+  //
+  //   // get move?
+  //
+  // }
 
-    // get move?
-
-  }
-
-  def play
-  until @board.won? || @board.lost?
-    puts @board.render
-
-    action, pos = get_move
-    perform_move(action, pos)
-  end
-
-  if @board.won?
-    puts "You win!"
-  elsif @board.lost?
-    puts "**Bomb hit!**"
-    puts @board.reveal
-  end
-end
+//   def play
+//   until @board.won? || @board.lost?
+//     puts @board.render
+//
+//     action, pos = get_move
+//     perform_move(action, pos)
+//   end
+//
+//   if @board.won?
+//     puts "You win!"
+//   elsif @board.lost?
+//     puts "**Bomb hit!**"
+//     puts @board.reveal
+//   end
+// end
 
   isOver() {
     return this.board.isOver();

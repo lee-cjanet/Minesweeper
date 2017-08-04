@@ -28,6 +28,7 @@ class Game {
     this.grid = this.board.grid;
     this.playMove = this.playMove.bind(this);
     this.countNeighbors = this.countNeighbors.bind(this);
+    console.log(this.board.locations);
   }
 
   isWon() {
@@ -65,16 +66,13 @@ class Game {
     let neighbors = this.board.neighbors(pos);
     let grid = this.grid;
     let count = 0;
-    console.log(neighbors);
 
     neighbors.forEach(function(neighbor) {
       let [x,y] = neighbor;
-      // console.log(!grid[x][y]);
-      if (!grid[x][y] && grid[x][y].bomb) {
+      if (grid[x][y].bomb) {
         count += 1;
       }
     });
-    console.log(count);
     return count;
   }
 

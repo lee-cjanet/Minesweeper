@@ -139,8 +139,10 @@ class View {
     let makeMove = this.makeMove.bind(this);
     // install a handler on the `li` elements inside the board.
     [].forEach.call(document.getElementsByClassName('hidden'), function(el) {
-      el.addEventListener('click', () => {
-        const tile = event.currentTarget;
+      el.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const tile = event.target;
         makeMove(tile);
       });
     });
@@ -161,8 +163,8 @@ class View {
     // tile.addClass(currentPlayer);
 
     if (!this.game.isOver() || !this.game.isWon()) {
-      this.game.countNeighbors(pos);
-      this.renderBoard(this.game.size);
+      let bombCount = this.game.countNeighbors(pos);
+      this.renderTile(pos, bombCount);
     } else if (this.game.isOver()) {
       // cleanup click handlers.
       // this.elementdocument.getElementById('div1').onmousedown = new function ("return false");
@@ -185,6 +187,15 @@ class View {
     }
   }
 
+  renderTile(pos, content) {
+    let [x,y] = pos;
+    let newChild = document.querySelectorAll(`li[pos='${x},${y}']`);
+
+    newChild[0].className = "revealed";
+    newChild[0].innerText = content;
+
+  }
+
   clearBoard() {
     const myNode = document.getElementById('minesweeper');
     while (myNode.firstChild) {
@@ -192,19 +203,22 @@ class View {
     }
   }
 
-  renderBoard(size) {
+  renderBoard(size, content) {
     this.clearBoard();
     let grid = document.getElementById("minesweeper");
     let solution = this.game.grid;
 
     for (let row = 0; grid.childElementCount < size; row++) {
-      let li = grid.appendChild(document.createElement('li'));
-      for (let col=0; li.childElementCount < size; col++) {
-        let ul = document.createElement('ul');
+      let ul = document.createElement('ul');
+      ul.className = row;
+      grid.appendChild(ul);
+      for (let col=0; ul.childElementCount < size; col++) {
+        let li = document.createElement('li');
         // let name;
-        solution[row][col].revealed ? ul.className = "revealed" : ul.className = "hidden";
-        ul.setAttribute('pos', `${row},${col}`);
-        li.appendChild(ul);
+        solution[row][col].revealed ? li.className = "revealed" : li.className = "hidden";
+        li.setAttribute('pos', `${row},${col}`);
+
+        ul.appendChild(li);
       }
     }
     console.log(grid);
@@ -252,6 +266,7 @@ class Game {
     this.grid = this.board.grid;
     this.playMove = this.playMove.bind(this);
     this.countNeighbors = this.countNeighbors.bind(this);
+    console.log(this.board.locations);
   }
 
   isWon() {
@@ -289,16 +304,13 @@ class Game {
     let neighbors = this.board.neighbors(pos);
     let grid = this.grid;
     let count = 0;
-    console.log(neighbors);
 
     neighbors.forEach(function(neighbor) {
       let [x,y] = neighbor;
-      // console.log(!grid[x][y]);
-      if (!grid[x][y] && grid[x][y].bomb) {
+      if (grid[x][y].bomb) {
         count += 1;
       }
     });
-    console.log(count);
     return count;
   }
 

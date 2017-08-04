@@ -19,19 +19,20 @@ li {
 .hidden {
   width: 40px;
   height: 40px;
-  background-color: #c9c9c9;
-  border: 1px solid blue;
+  background-color: #3CC0D9;
+  // background-color: #59C8ED;
+  border: 1px solid #56D5FF;
 }
 
 .hidden:hover {
-  background-color: #F2F2F2;
+  background-color: #79D5FF;
 }
 
 .revealed {
   width: 40px;
   height: 40px;
-  background-color: #F2F2F2;
-  border: 1px solid green;
+  background-color: #2C7CA1;
+  border: 1px solid #56D5FF;
   text-align: center;
   font-weight: 700;
 }

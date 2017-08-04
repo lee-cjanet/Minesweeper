@@ -70,35 +70,28 @@
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__view__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__view___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__view__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__game__ = __webpack_require__(2);
 
 
 
 const clearBoard = () => {
-  console.log("one");
   const myNode = document.getElementById('minesweeper');
   while (myNode.firstChild) {
-    console.log("here");
     myNode.removeChild(myNode.firstChild);
   }
 };
 
 const createNewGame = (level) => {
   clearBoard();
-  console.log("two");
   const rootEl = document.getElementById('minesweeper');
-  console.log(rootEl);
-
   const game = new __WEBPACK_IMPORTED_MODULE_1__game__["a" /* default */](level);
-  console.log("four");
-  new __WEBPACK_IMPORTED_MODULE_0__view__["a" /* default */](game, rootEl);
-  console.log("five");
+  new __WEBPACK_IMPORTED_MODULE_0__view__["default"](game, rootEl);
 };
 
 
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log("zero");
   createNewGame("beginner");
 });
 
@@ -131,88 +124,10 @@ toggle between hiding and showing the dropdown content */
 
 /***/ }),
 /* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, __webpack_exports__) {
 
 "use strict";
-class View {
-  constructor(game, element) {
-    this.game = game;
-    this.element = element;
-
-    this.renderBoard(this.game.level);
-    this.bindEvents();
-  }
-
-
-
-  bindEvents() {
-    // install a handler on the `li` elements inside the board.
-    [].forEach.call(document.querySelectorAll('hidden'), function(el) {
-      el.addEventLIstener('click', function() {
-        const tile = event.currentTarget;
-        this.makeMove(tile);
-      });
-    });
-  }
-
-  // makeMove($square) {}
-
-
-
-  renderBoard(size) {
-    let grid = document.getElementById("minesweeper");
-    console.log("four");
-    for (let row=0; grid.length < size; row++) {
-      grid.appendChild(document.createElement('li'));
-      for (let col=0; grid[row].length < size; col++) {
-        let ul = document.createElement('ul');
-        ul.dataset.className = "hidden";
-        ul.dataset.pos = {x: row, y: col};
-        grid[row].appendChild(ul);
-      }
-    }
-    console.log("five");
-  }
-
-}
-
-
-/* harmony default export */ __webpack_exports__["a"] = (View);
-
-
-
-  // makeMove($square) {
-  //   const pos = $square.data("pos");
-  //   const currentPlayer = this.game.currentPlayer;
-  //
-  //   try {
-  //     this.game.playMove(pos);
-  //   } catch (e) {
-  //     alert("Invalid move! Try again.");
-  //     return;
-  //   }
-  //
-  //   $square.addClass(currentPlayer);
-  //
-  //   if (this.game.isOver()) {
-  //     // cleanup click handlers.
-  //     this.$el.off("click");
-  //     this.$el.addClass("game-over");
-  //
-  //     const winner = this.game.winner();
-  //     const $figcaption = $("<figcaption>");
-  //
-  //     if (winner) {
-  //       this.$el.addClass(`winner-${winner}`);
-  //       $figcaption.html(`You win, ${winner}!`);
-  //     } else {
-  //       $figcaption.html("It's a draw!");
-  //     }
-  //
-  //     this.$el.append($figcaption);
-  //   }
-  // }
-
+throw new Error("Module parse failed: /Users/Janet/Desktop/App Academy/Minesweeper/js/view.js Unexpected token (51:17)\nYou may need an appropriate loader to handle this file type.\n| \n| \n|   makeMove(tile) {\n|     const pos = tile.data(\"pos\");\n|     const currentPlayer = this.game.currentPlayer;");
 
 /***/ }),
 /* 2 */
@@ -242,19 +157,48 @@ const DIFFICULTY = {'beginner': 8, 'intermediate': 16, 'difficult':24};
 
 class Game {
   constructor(level = 'beginner') {
-    console.log(DIFFICULTY[level]);
-    this.level = level;
-    this.board = new __WEBPACK_IMPORTED_MODULE_0__board__["a" /* default */](DIFFICULTY[level]);
+
+    this.size = DIFFICULTY[level];
+    this.board = new __WEBPACK_IMPORTED_MODULE_0__board__["a" /* default */](DIFFICULTY[level]); //creates empty board object
+
+    this.board.grid;
+  }
+
+  isWon() {
+    let grid = this.board.grid;
+    let count = 0;
+    let merged = [].concat.apply([], this.board.grid);
+    merged.forEach(function(pos) {
+      let [x,y] = pos;
+      if (grid[x][y].revealed && !grid[x][y].bomb) {
+        count += 1;
+      }
+    });
+    return ((this.size * this.size) - this.board.bombs === count);
+  }
+
+  isOver() {
+    let locations = this.board.BombLocations;
+    let grid = this.board.grid;
+
+    locations.forEach(function(pos) {
+      let [x,y] = pos;
+      if (grid[x][y].revealed && grid[x][y].bomb) {
+        return true;
+      }
+    });
 
   }
 
-  // play() {
-  //   while (!(isOver()) || !(isWon()))
-  //   console.log(this.board.render)
-  //
-  //   // get move?
-  //
-  // }
+  play() {
+    while (!this.isOver() || !this.isWon()) {
+
+    }
+    // console.log(this.board.render)
+
+    // get move?
+
+  }
 
 //   def play
 //   until @board.won? || @board.lost?
@@ -272,17 +216,14 @@ class Game {
 //   end
 // end
 
-  isOver() {
-    return this.board.isOver();
-  }
-
-  playMove(pos) {
-    this.board.placeMark(pos);
-  }
-
-  isWon() {
-    return this.board.isWon();
-  }
+  // isOver() {
+  //   return this.board.isOver();
+  // }
+  //
+  // playMove(pos) {
+  //   this.board.placeMark(pos);
+  // }
+  //
 
 }
 
@@ -331,9 +272,9 @@ class Board {
     } else {
       this.bombs = 10;
     }
-    console.log("h1");
-    this.grid = this.makeGrid(size);
-    console.log(this.grid);
+
+    this.makeGrid(size);
+    this.setBombs = this.setBombs.bind(this);
   }
 
   compareArr(nestedArr, arr2) {
@@ -344,13 +285,13 @@ class Board {
     });
   }
 
-  generateBombLocations() {
+  BombLocations() {
     let locations = [];
     for (let i=0; locations.length < this.bombs; i++) {
       let row = Math.floor(Math.random() * this.size);
       let col = Math.floor(Math.random() * this.size);
 
-      if (this.compareArr(locations, [row, col])) {
+      if (!this.compareArr(locations, [row, col])) {
         locations.push([row, col]);
       }
     }
@@ -358,40 +299,25 @@ class Board {
     return locations;
   }
 
-  setBombs(grid) {
-    console.log("h3");
-    this.generateBombLocations().map(function(pos) {
+  setBombs() {
+    let grid = this.grid;
+    this.BombLocations().map(function(pos) {
       grid[pos[0]][pos[1]].bomb = true;
     });
-    console.log(grid);
-    return grid;
+    return this.grid;
   }
 
   makeGrid(size) {
-    let grid = [];
+    this.grid = [];
 
-    for (let row=0; grid.length < size; row++) {
-      grid.push([]);
-      for (let col=0; grid[row].length < size; col++) {
-        grid[row].push({revealed: false, bomb: false, flagged: false, marked: false});
+    for (let row=0; this.grid.length < size; row++) {
+      this.grid.push([]);
+      for (let col=0; this.grid[row].length < size; col++) {
+        this.grid[row].push({revealed: false, bomb: false, flagged: false, marked: false});
       }
     }
-    console.log("h2");
-    return this.setBombs(grid);
-  }
-
-
-
-
-  won() {
-    let count = 0;
-    let merged = [].concat.apply([], this.grid);
-    merged.forEach(function(pos) {
-      if (pos === true) {
-        count += 1;
-      }
-    });
-    return ((this.size * this.size) - this.bombs === count);
+    
+    this.setBombs();
   }
 
 }

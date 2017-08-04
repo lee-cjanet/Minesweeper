@@ -20,19 +20,48 @@ const DIFFICULTY = {'beginner': 8, 'intermediate': 16, 'difficult':24};
 
 class Game {
   constructor(level = 'beginner') {
-    console.log(DIFFICULTY[level]);
-    this.level = level;
-    this.board = new Board(DIFFICULTY[level]);
+
+    this.size = DIFFICULTY[level];
+    this.board = new Board(DIFFICULTY[level]); //creates empty board object
+
+    this.board.grid;
+  }
+
+  isWon() {
+    let grid = this.board.grid;
+    let count = 0;
+    let merged = [].concat.apply([], this.board.grid);
+    merged.forEach(function(pos) {
+      let [x,y] = pos;
+      if (grid[x][y].revealed && !grid[x][y].bomb) {
+        count += 1;
+      }
+    });
+    return ((this.size * this.size) - this.board.bombs === count);
+  }
+
+  isOver() {
+    let locations = this.board.BombLocations;
+    let grid = this.board.grid;
+
+    locations.forEach(function(pos) {
+      let [x,y] = pos;
+      if (grid[x][y].revealed && grid[x][y].bomb) {
+        return true;
+      }
+    });
 
   }
 
-  // play() {
-  //   while (!(isOver()) || !(isWon()))
-  //   console.log(this.board.render)
-  //
-  //   // get move?
-  //
-  // }
+  play() {
+    while (!this.isOver() || !this.isWon()) {
+
+    }
+    // console.log(this.board.render)
+
+    // get move?
+
+  }
 
 //   def play
 //   until @board.won? || @board.lost?
@@ -50,17 +79,14 @@ class Game {
 //   end
 // end
 
-  isOver() {
-    return this.board.isOver();
-  }
-
-  playMove(pos) {
-    this.board.placeMark(pos);
-  }
-
-  isWon() {
-    return this.board.isWon();
-  }
+  // isOver() {
+  //   return this.board.isOver();
+  // }
+  //
+  // playMove(pos) {
+  //   this.board.placeMark(pos);
+  // }
+  //
 
 }
 

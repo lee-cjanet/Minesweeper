@@ -2,30 +2,22 @@ import View from './view';
 import Game from './game';
 
 const clearBoard = () => {
-  console.log("one");
   const myNode = document.getElementById('minesweeper');
   while (myNode.firstChild) {
-    console.log("here");
     myNode.removeChild(myNode.firstChild);
   }
 };
 
 const createNewGame = (level) => {
   clearBoard();
-  console.log("two");
   const rootEl = document.getElementById('minesweeper');
-  console.log(rootEl);
-
   const game = new Game(level);
-  console.log("four");
   new View(game, rootEl);
-  console.log("five");
 };
 
 
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log("zero");
   createNewGame("beginner");
 });
 

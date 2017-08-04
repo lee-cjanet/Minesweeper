@@ -5,23 +5,30 @@ class View {
 
     this.renderBoard(this.game.size);
     this.bindEvents();
+    this.movesCounter = this.movesCounter.bind(this);
   }
 
-  countdown() {
-    var seconds = 180;
-    function tick() {
-      let counter = document.getElementById("counter");
-      seconds--;
-      counter.innerHTML =
-        "0:" + (seconds < 10 ? "0" : "") +  String(seconds);
-        if( seconds > 0 ) {
-          setTimeout(tick, 1000);
-        } else {
-          alert("Game over");
-          return;
-        }
-      }
-      tick();
+  // countdown() {
+  //   var seconds = 180;
+  //   function tick() {
+  //     let counter = document.getElementById("counter");
+  //     seconds--;
+  //     counter.innerHTML =
+  //       "0:" + (seconds < 10 ? "0" : "") +  String(seconds);
+  //       if( seconds > 0 ) {
+  //         setTimeout(tick, 1000);
+  //       } else {
+  //         alert("Game over");
+  //         return;
+  //       }
+  //     }
+  //     tick();
+  // }
+
+  movesCounter() {
+    let counter = document.getElementById("moves-counter");
+    let moves = parseInt(counter.innerHTML);
+    counter.innerHTML = moves + 1;
   }
 
 
@@ -42,10 +49,11 @@ class View {
     let string = tile.getAttribute("pos");
     let pos = JSON.parse("[" + string + "]");
 
-    this.countdown();
+    // this.countdown();
 
     try {
       this.game.playMove(pos);
+      this.movesCounter();
     } catch (e) {
       alert("Invalid move! Try again.");
       return;

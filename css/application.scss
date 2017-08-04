@@ -1,4 +1,28 @@
+@import url('https://fonts.googleapis.com/css?family=Slabo+27px');
+
 @import './reset.scss';
 
 @import './board.scss';
 @import './dropdown_menu.scss';
+
+body {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.index {
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+h1 {
+  font-size: 30px;
+  padding: 40px;
+}

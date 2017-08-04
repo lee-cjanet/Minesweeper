@@ -268,7 +268,6 @@ class View {
         ul.appendChild(li);
       }
     }
-    console.log(grid);
   }
 
 }

@@ -2,7 +2,6 @@ class View {
   constructor(game, element) {
     this.game = game;
     this.element = element;
-    this.solution = game.board.grid;
 
     this.renderBoard(this.game.size);
     this.bindEvents();
@@ -11,46 +10,20 @@ class View {
 
 
   bindEvents() {
+    let makeMove = this.makeMove.bind(this);
     // install a handler on the `li` elements inside the board.
-    [].forEach.call(document.querySelectorAll('hidden'), function(el) {
-      el.addEventLIstener('click', () => {
+    [].forEach.call(document.getElementsByClassName('hidden'), function(el) {
+      el.addEventListener('click', () => {
         const tile = event.currentTarget;
-        this.makeMove(tile);
+        makeMove(tile);
       });
     });
   }
 
-  // makeMove(tile) {}
-
-
-
-  renderBoard(size) {
-    let grid = document.getElementById("minesweeper");
-
-
-    for (let row = 0; grid.childElementCount < size; row++) {
-      let li = grid.appendChild(document.createElement('li'));
-      for (let col=0; li.childElementCount < size; col++) {
-        let ul = document.createElement('ul');
-        // let name;
-        this.solution[row][col].revealed ? ul.className = "revealed" : ul.className = "hidden";
-        ul.dataset.pos = `{x: ${row}, y: ${col}}`;
-        li.appendChild(ul);
-      }
-    }
-    console.log(grid);
-  }
-
-}
-
-
-export default View;
-
-
-
   makeMove(tile) {
-    const pos = tile.data("pos");
-    const currentPlayer = this.game.currentPlayer;
+    let string = tile.getAttribute("pos");
+    let pos = JSON.parse("[" + string + "]");
+    console.log(this.game);
 
     try {
       this.game.playMove(pos);
@@ -61,21 +34,57 @@ export default View;
 
     // tile.addClass(currentPlayer);
 
-    if (this.game.isOver()) {
+    if (!this.game.isOver() || !this.game.isWon()) {
+      this.game.countNeighbors(pos);
+      this.renderBoard(this.game.size);
+    } else if (this.game.isOver()) {
       // cleanup click handlers.
-      this.$el.off("click");
-      this.$el.addClass("game-over");
+      // this.elementdocument.getElementById('div1').onmousedown = new function ("return false");
+      document.getElementsByTagName('ul').addEventListener('click', function(e) {
+        e.preventDefault();
+      });
 
-      const winner = this.game.winner();
-      const $figcaption = $("<figcaption>");
+      this.element.addClass("game-over");
 
-      if (winner) {
-        this.$el.addClass(`winner-${winner}`);
-        $figcaption.html(`You win, ${winner}!`);
-      } else {
-        $figcaption.html("It's a draw!");
-      }
+      const figcaption = document.createElement("FIGCAPTION");
 
-      this.$el.append($figcaption);
+      // if (winner) {
+      //   this.$el.addClass(`winner-${winner}`);
+      //   $figcaption.html(`You win, ${winner}!`);
+      // } else {
+      //   $figcaption.html("It's a draw!");
+      // }
+
+      this.element.append(figcaption);
     }
   }
+
+  clearBoard() {
+    const myNode = document.getElementById('minesweeper');
+    while (myNode.firstChild) {
+      myNode.removeChild(myNode.firstChild);
+    }
+  }
+
+  renderBoard(size) {
+    this.clearBoard();
+    let grid = document.getElementById("minesweeper");
+    let solution = this.game.grid;
+
+    for (let row = 0; grid.childElementCount < size; row++) {
+      let li = grid.appendChild(document.createElement('li'));
+      for (let col=0; li.childElementCount < size; col++) {
+        let ul = document.createElement('ul');
+        // let name;
+        solution[row][col].revealed ? ul.className = "revealed" : ul.className = "hidden";
+        ul.setAttribute('pos', `${row},${col}`);
+        li.appendChild(ul);
+      }
+    }
+    console.log(grid);
+  }
+
+}
+
+
+export default View;

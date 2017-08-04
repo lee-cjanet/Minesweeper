@@ -16,6 +16,7 @@ import Board from './board';
 // let game = new Game()
 // $easyButton.addEventLIstener('click', () => game.start('easy'));
 
+
 const DIFFICULTY = {'beginner': 8, 'intermediate': 16, 'difficult':24};
 
 class Game {
@@ -24,13 +25,15 @@ class Game {
     this.size = DIFFICULTY[level];
     this.board = new Board(DIFFICULTY[level]); //creates empty board object
 
-    this.board.grid;
+    this.grid = this.board.grid;
+    this.playMove = this.playMove.bind(this);
+    this.countNeighbors = this.countNeighbors.bind(this);
   }
 
   isWon() {
-    let grid = this.board.grid;
+    let grid = this.grid;
     let count = 0;
-    let merged = [].concat.apply([], this.board.grid);
+    let merged = [].concat.apply([], this.grid);
     merged.forEach(function(pos) {
       let [x,y] = pos;
       if (grid[x][y].revealed && !grid[x][y].bomb) {
@@ -41,8 +44,8 @@ class Game {
   }
 
   isOver() {
-    let locations = this.board.BombLocations;
-    let grid = this.board.grid;
+    let locations = this.board.locations;
+    let grid = this.grid;
 
     locations.forEach(function(pos) {
       let [x,y] = pos;
@@ -53,15 +56,39 @@ class Game {
 
   }
 
-  play() {
-    while (!this.isOver() || !this.isWon()) {
+  playMove(pos) {
+    let [x,y] = pos;
+    this.grid[x][y].revealed = true;
+  }
 
-    }
+  countNeighbors(pos) {
+    let neighbors = this.board.neighbors(pos);
+    let grid = this.grid;
+    let count = 0;
+    console.log(neighbors);
+
+    neighbors.forEach(function(neighbor) {
+      let [x,y] = neighbor;
+      // console.log(!grid[x][y]);
+      if (!grid[x][y] && grid[x][y].bomb) {
+        count += 1;
+      }
+    });
+    console.log(count);
+    return count;
+  }
+
+
+
+  // play() {
+  //   while (!this.isOver() || !this.isWon()) {
+  //     playMove
+  //   }
     // console.log(this.board.render)
 
     // get move?
 
-  }
+  // }
 
 //   def play
 //   until @board.won? || @board.lost?

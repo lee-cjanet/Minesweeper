@@ -69,29 +69,23 @@
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__view__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__view___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__view__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__game__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__js_view__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__js_game__ = __webpack_require__(2);
 
 
-
-const clearBoard = () => {
-  const myNode = document.getElementById('minesweeper');
-  while (myNode.firstChild) {
-    myNode.removeChild(myNode.firstChild);
-  }
-};
 
 const createNewGame = (level) => {
-  clearBoard();
   const rootEl = document.getElementById('minesweeper');
-  const game = new __WEBPACK_IMPORTED_MODULE_1__game__["a" /* default */](level);
-  new __WEBPACK_IMPORTED_MODULE_0__view__["default"](game, rootEl);
+  const game = new __WEBPACK_IMPORTED_MODULE_1__js_game__["a" /* default */](level);
+  new __WEBPACK_IMPORTED_MODULE_0__js_view__["a" /* default */](game, rootEl);
 };
 
-
-
 document.addEventListener('DOMContentLoaded', () => {
+//   [].forEach.call(document.querySelectorAll('ul'), function(el) {
+//   el.addEventListener('click', function() {
+//
+//   });
+// });
   createNewGame("beginner");
 });
 
@@ -113,21 +107,114 @@ toggle between hiding and showing the dropdown content */
 //       let openDropdown = dropdowns[i];
 //       if (openDropdown.classList.contains('show')) {
 //         openDropdown.classList.remove('show');
-//       } else {
-//         dropdowns[i].addEventListener(createNewGame(dropdowns[i].id));
-//         // remove board and create new game
 //       }
 //     }
 //   }
 // };
 
 
+// else {
+//   dropdowns[i].addEventListener(createNewGame(dropdowns[i].id));
+//   // remove board and create new game
+// }
+
+
 /***/ }),
 /* 1 */
-/***/ (function(module, __webpack_exports__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-throw new Error("Module parse failed: /Users/Janet/Desktop/App Academy/Minesweeper/js/view.js Unexpected token (51:17)\nYou may need an appropriate loader to handle this file type.\n| \n| \n|   makeMove(tile) {\n|     const pos = tile.data(\"pos\");\n|     const currentPlayer = this.game.currentPlayer;");
+class View {
+  constructor(game, element) {
+    this.game = game;
+    this.element = element;
+
+    this.renderBoard(this.game.size);
+    this.bindEvents();
+  }
+
+
+
+  bindEvents() {
+    let makeMove = this.makeMove.bind(this);
+    // install a handler on the `li` elements inside the board.
+    [].forEach.call(document.getElementsByClassName('hidden'), function(el) {
+      el.addEventListener('click', () => {
+        const tile = event.currentTarget;
+        makeMove(tile);
+      });
+    });
+  }
+
+  makeMove(tile) {
+    let string = tile.getAttribute("pos");
+    let pos = JSON.parse("[" + string + "]");
+    console.log(this.game);
+
+    try {
+      this.game.playMove(pos);
+    } catch (e) {
+      alert("Invalid move! Try again.");
+      return;
+    }
+
+    // tile.addClass(currentPlayer);
+
+    if (!this.game.isOver() || !this.game.isWon()) {
+      this.game.countNeighbors(pos);
+      this.renderBoard(this.game.size);
+    } else if (this.game.isOver()) {
+      // cleanup click handlers.
+      // this.elementdocument.getElementById('div1').onmousedown = new function ("return false");
+      document.getElementsByTagName('ul').addEventListener('click', function(e) {
+        e.preventDefault();
+      });
+
+      this.element.addClass("game-over");
+
+      const figcaption = document.createElement("FIGCAPTION");
+
+      // if (winner) {
+      //   this.$el.addClass(`winner-${winner}`);
+      //   $figcaption.html(`You win, ${winner}!`);
+      // } else {
+      //   $figcaption.html("It's a draw!");
+      // }
+
+      this.element.append(figcaption);
+    }
+  }
+
+  clearBoard() {
+    const myNode = document.getElementById('minesweeper');
+    while (myNode.firstChild) {
+      myNode.removeChild(myNode.firstChild);
+    }
+  }
+
+  renderBoard(size) {
+    this.clearBoard();
+    let grid = document.getElementById("minesweeper");
+    let solution = this.game.grid;
+
+    for (let row = 0; grid.childElementCount < size; row++) {
+      let li = grid.appendChild(document.createElement('li'));
+      for (let col=0; li.childElementCount < size; col++) {
+        let ul = document.createElement('ul');
+        // let name;
+        solution[row][col].revealed ? ul.className = "revealed" : ul.className = "hidden";
+        ul.setAttribute('pos', `${row},${col}`);
+        li.appendChild(ul);
+      }
+    }
+    console.log(grid);
+  }
+
+}
+
+
+/* harmony default export */ __webpack_exports__["a"] = (View);
+
 
 /***/ }),
 /* 2 */
@@ -153,6 +240,7 @@ throw new Error("Module parse failed: /Users/Janet/Desktop/App Academy/Minesweep
 // let game = new Game()
 // $easyButton.addEventLIstener('click', () => game.start('easy'));
 
+
 const DIFFICULTY = {'beginner': 8, 'intermediate': 16, 'difficult':24};
 
 class Game {
@@ -161,13 +249,15 @@ class Game {
     this.size = DIFFICULTY[level];
     this.board = new __WEBPACK_IMPORTED_MODULE_0__board__["a" /* default */](DIFFICULTY[level]); //creates empty board object
 
-    this.board.grid;
+    this.grid = this.board.grid;
+    this.playMove = this.playMove.bind(this);
+    this.countNeighbors = this.countNeighbors.bind(this);
   }
 
   isWon() {
-    let grid = this.board.grid;
+    let grid = this.grid;
     let count = 0;
-    let merged = [].concat.apply([], this.board.grid);
+    let merged = [].concat.apply([], this.grid);
     merged.forEach(function(pos) {
       let [x,y] = pos;
       if (grid[x][y].revealed && !grid[x][y].bomb) {
@@ -178,8 +268,8 @@ class Game {
   }
 
   isOver() {
-    let locations = this.board.BombLocations;
-    let grid = this.board.grid;
+    let locations = this.board.locations;
+    let grid = this.grid;
 
     locations.forEach(function(pos) {
       let [x,y] = pos;
@@ -190,15 +280,39 @@ class Game {
 
   }
 
-  play() {
-    while (!this.isOver() || !this.isWon()) {
+  playMove(pos) {
+    let [x,y] = pos;
+    this.grid[x][y].revealed = true;
+  }
 
-    }
+  countNeighbors(pos) {
+    let neighbors = this.board.neighbors(pos);
+    let grid = this.grid;
+    let count = 0;
+    console.log(neighbors);
+
+    neighbors.forEach(function(neighbor) {
+      let [x,y] = neighbor;
+      // console.log(!grid[x][y]);
+      if (!grid[x][y] && grid[x][y].bomb) {
+        count += 1;
+      }
+    });
+    console.log(count);
+    return count;
+  }
+
+
+
+  // play() {
+  //   while (!this.isOver() || !this.isWon()) {
+  //     playMove
+  //   }
     // console.log(this.board.render)
 
     // get move?
 
-  }
+  // }
 
 //   def play
 //   until @board.won? || @board.lost?
@@ -259,7 +373,16 @@ class Game {
 
 // Board class is responsible for drawing a board, planting mines, calculating mine distance, traversing the board and revealing fields.
 
-//
+const NEIGHBORS = [
+    [-1, -1],
+    [-1,  0],
+    [-1,  1],
+    [ 0, -1],
+    [ 0,  1],
+    [ 1, -1],
+    [ 1,  0],
+    [ 1,  1]
+  ];
 
 class Board {
   constructor(size) {
@@ -273,8 +396,10 @@ class Board {
       this.bombs = 10;
     }
 
+    this.locations = this.BombLocations();
     this.makeGrid(size);
     this.setBombs = this.setBombs.bind(this);
+    this.neighbors = this.neighbors.bind(this);
   }
 
   compareArr(nestedArr, arr2) {
@@ -301,10 +426,12 @@ class Board {
 
   setBombs() {
     let grid = this.grid;
-    this.BombLocations().map(function(pos) {
-      grid[pos[0]][pos[1]].bomb = true;
+    this.locations.forEach(function(pos) {
+      let [x,y] = pos;
+      let test = grid[x][y].bomb;
+      grid[x][y].bomb = true;
     });
-    return this.grid;
+    // return this.grid;
   }
 
   makeGrid(size) {
@@ -316,8 +443,32 @@ class Board {
         this.grid[row].push({revealed: false, bomb: false, flagged: false, marked: false});
       }
     }
-    
+
     this.setBombs();
+  }
+
+  neighbors(pos) {
+    let neighbors = [];
+    let [a,b] = pos;
+    let size = this.size;
+
+    NEIGHBORS.forEach(function(neighbor) {
+      let [c,d] = neighbor;
+      let x = a + c;
+      let y = b + d;
+
+      if ((0 <= x && x < size) && (0 <= y && y < size)) {
+        neighbors.push([a+c, b+d]);
+      }
+    });
+    return neighbors;
+  }
+
+  reveal(grid) {
+    this.locations.forEach(function(pos) {
+      let [x,y] = pos;
+      grid[x][y].revealed = true;
+    });
   }
 
 }

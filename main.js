@@ -1,23 +1,18 @@
-import View from './view';
-import Game from './game';
-
-const clearBoard = () => {
-  const myNode = document.getElementById('minesweeper');
-  while (myNode.firstChild) {
-    myNode.removeChild(myNode.firstChild);
-  }
-};
+import View from './js/view';
+import Game from './js/game';
 
 const createNewGame = (level) => {
-  clearBoard();
   const rootEl = document.getElementById('minesweeper');
   const game = new Game(level);
   new View(game, rootEl);
 };
 
-
-
 document.addEventListener('DOMContentLoaded', () => {
+//   [].forEach.call(document.querySelectorAll('ul'), function(el) {
+//   el.addEventListener('click', function() {
+//
+//   });
+// });
   createNewGame("beginner");
 });
 
@@ -39,10 +34,13 @@ toggle between hiding and showing the dropdown content */
 //       let openDropdown = dropdowns[i];
 //       if (openDropdown.classList.contains('show')) {
 //         openDropdown.classList.remove('show');
-//       } else {
-//         dropdowns[i].addEventListener(createNewGame(dropdowns[i].id));
-//         // remove board and create new game
 //       }
 //     }
 //   }
 // };
+
+
+// else {
+//   dropdowns[i].addEventListener(createNewGame(dropdowns[i].id));
+//   // remove board and create new game
+// }

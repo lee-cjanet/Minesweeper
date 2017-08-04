@@ -19,7 +19,16 @@ import Tile from './tile';
 
 // Board class is responsible for drawing a board, planting mines, calculating mine distance, traversing the board and revealing fields.
 
-//
+const NEIGHBORS = [
+    [-1, -1],
+    [-1,  0],
+    [-1,  1],
+    [ 0, -1],
+    [ 0,  1],
+    [ 1, -1],
+    [ 1,  0],
+    [ 1,  1]
+  ];
 
 class Board {
   constructor(size) {
@@ -33,8 +42,10 @@ class Board {
       this.bombs = 10;
     }
 
+    this.locations = this.BombLocations();
     this.makeGrid(size);
     this.setBombs = this.setBombs.bind(this);
+    this.neighbors = this.neighbors.bind(this);
   }
 
   compareArr(nestedArr, arr2) {
@@ -61,10 +72,12 @@ class Board {
 
   setBombs() {
     let grid = this.grid;
-    this.BombLocations().map(function(pos) {
-      grid[pos[0]][pos[1]].bomb = true;
+    this.locations.forEach(function(pos) {
+      let [x,y] = pos;
+      let test = grid[x][y].bomb;
+      grid[x][y].bomb = true;
     });
-    return this.grid;
+    // return this.grid;
   }
 
   makeGrid(size) {
@@ -76,8 +89,32 @@ class Board {
         this.grid[row].push({revealed: false, bomb: false, flagged: false, marked: false});
       }
     }
-    
+
     this.setBombs();
+  }
+
+  neighbors(pos) {
+    let neighbors = [];
+    let [a,b] = pos;
+    let size = this.size;
+
+    NEIGHBORS.forEach(function(neighbor) {
+      let [c,d] = neighbor;
+      let x = a + c;
+      let y = b + d;
+
+      if ((0 <= x && x < size) && (0 <= y && y < size)) {
+        neighbors.push([a+c, b+d]);
+      }
+    });
+    return neighbors;
+  }
+
+  reveal(grid) {
+    this.locations.forEach(function(pos) {
+      let [x,y] = pos;
+      grid[x][y].revealed = true;
+    });
   }
 
 }

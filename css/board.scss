@@ -8,15 +8,30 @@ ul {
   flex-direction: row;
 }
 
-/*ul*/
+li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+/*li*/
 .hidden {
   width: 40px;
   height: 40px;
+  background-color: #c9c9c9;
   border: 1px solid blue;
+}
+
+.hidden:hover {
+  background-color: #F2F2F2;
 }
 
 .revealed {
   width: 40px;
   height: 40px;
+  background-color: #F2F2F2;
   border: 1px solid green;
+  text-align: center;
+  font-weight: 700;
 }

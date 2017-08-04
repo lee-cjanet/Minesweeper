@@ -1,23 +1,6 @@
 import Board from './board';
 
-// Game class is responsible for the gameplay (LEVEL levels, timer, starting and stopping a game).
-
-// +start()
-// +stop()
-// -startTimer()
-// -stopTimer()
-// -resetTimer()
-// -reveal()
-// - clear board
-// - redraw board
-
-// start easy game. call easy game, easy goes into constructor.
-
-// let game = new Game()
-// $easyButton.addEventLIstener('click', () => game.start('easy'));
-
-
-const DIFFICULTY = {'beginner': 8, 'intermediate': 16, 'difficult':24};
+const DIFFICULTY = {'beginner': 8, 'intermediate': 12, 'difficult':16};
 
 class Game {
   constructor(level = 'beginner') {
@@ -28,6 +11,9 @@ class Game {
     this.grid = this.board.grid;
     this.playMove = this.playMove.bind(this);
     this.countNeighbors = this.countNeighbors.bind(this);
+    this.isWon = this.isWon.bind(this);
+    this.isOver = this.isOver.bind(this);
+    this.reveal = this.reveal.bind(this);
     console.log(this.board.locations);
   }
 
@@ -35,26 +21,28 @@ class Game {
     let grid = this.grid;
     let count = 0;
     let merged = [].concat.apply([], this.grid);
-    merged.forEach(function(pos) {
-      let [x,y] = pos;
-      if (grid[x][y].revealed && !grid[x][y].bomb) {
+    merged.forEach(function(tileObj) {
+      if (tileObj.revealed && !tileObj.bomb) {
         count += 1;
       }
     });
-    return ((this.size * this.size) - this.board.bombs === count);
+    let result = ((this.size * this.size) - this.board.bombs === count);
   }
 
   isOver() {
     let locations = this.board.locations;
     let grid = this.grid;
+    let over = false;
 
     locations.forEach(function(pos) {
       let [x,y] = pos;
+
       if (grid[x][y].revealed && grid[x][y].bomb) {
-        return true;
+        over = true;
       }
     });
 
+    return over;
   }
 
   playMove(pos) {
@@ -73,7 +61,13 @@ class Game {
         count += 1;
       }
     });
-    return count;
+
+    let [a,b] = pos;
+    grid[a][b].content = count;
+  }
+
+  reveal() {
+    this.board.reveal(this.grid);
   }
 
 

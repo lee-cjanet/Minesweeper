@@ -8,7 +8,7 @@ Minesweeper is a game of both chance and logic. The player begins by clicking an
 
 - [ ] create a playable board
 - [ ] implement levels
-- [ ] track time per game
+- [ ] board is immobile on game over
 - [ ] tracks number of turns taken
 
 # Technologies

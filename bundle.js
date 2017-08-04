@@ -80,43 +80,46 @@ const createNewGame = (level) => {
   new __WEBPACK_IMPORTED_MODULE_0__js_view__["a" /* default */](game, rootEl);
 };
 
+
 document.addEventListener('DOMContentLoaded', () => {
-//   [].forEach.call(document.querySelectorAll('ul'), function(el) {
-//   el.addEventListener('click', function() {
-//
-//   });
-// });
   createNewGame("beginner");
+
+  let easy = document.getElementById('beginner');
+  let medium = document.getElementById('intermediate');
+  let hard = document.getElementById('difficult');
+
+  easy.addEventListener('click', () => {
+    createNewGame('beginner');
+  });
+
+  medium.addEventListener('click', () => {
+    createNewGame('intermediate');
+  });
+
+  hard.addEventListener('click', () => {
+    createNewGame('difficult');
+  });
 });
 
 
-/* When the user clicks on the dropdown button,
-toggle between hiding and showing the dropdown content */
-// function DropDownToggle() {
-//     document.getElementById("myDropdown").classList.toggle("show");
-// }
-//
-// // Close the dropdown menu if the user clicks outside of it
-// window.onclick = function(event) {
-//   if (!event.target.matches('.dropbtn')) {
-//
-//     // dropdown is an array of anker tags
-//     const dropdowns = document.getElementsByClassName("dropdown-content");
-//     let i;
-//     for (i = 0; i < dropdowns.length; i++) {
-//       let openDropdown = dropdowns[i];
-//       if (openDropdown.classList.contains('show')) {
-//         openDropdown.classList.remove('show');
-//       }
-//     }
-//   }
-// };
 
 
-// else {
-//   dropdowns[i].addEventListener(createNewGame(dropdowns[i].id));
-//   // remove board and create new game
-// }
+// Close the dropdown menu if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (createNewGame);
 
 
 /***/ }),
@@ -133,6 +136,22 @@ class View {
     this.bindEvents();
   }
 
+  countdown() {
+    var seconds = 180;
+    function tick() {
+      let counter = document.getElementById("counter");
+      seconds--;
+      counter.innerHTML =
+        "0:" + (seconds < 10 ? "0" : "") +  String(seconds);
+        if( seconds > 0 ) {
+          setTimeout(tick, 1000);
+        } else {
+          alert("Game over");
+          return;
+        }
+      }
+      tick();
+  }
 
 
   bindEvents() {
@@ -151,7 +170,8 @@ class View {
   makeMove(tile) {
     let string = tile.getAttribute("pos");
     let pos = JSON.parse("[" + string + "]");
-    console.log(this.game);
+
+    this.countdown();
 
     try {
       this.game.playMove(pos);
@@ -160,39 +180,52 @@ class View {
       return;
     }
 
-    // tile.addClass(currentPlayer);
+    if (this.game.isOver()) {
 
-    if (!this.game.isOver() || !this.game.isWon()) {
-      let bombCount = this.game.countNeighbors(pos);
-      this.renderTile(pos, bombCount);
-    } else if (this.game.isOver()) {
-      // cleanup click handlers.
-      // this.elementdocument.getElementById('div1').onmousedown = new function ("return false");
-      document.getElementsByTagName('ul').addEventListener('click', function(e) {
-        e.preventDefault();
+      [].forEach.call(document.getElementsByClassName('hidden'), function(el) {
+        el.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+        });
       });
+
+      this.game.reveal();
+      this.renderBoard(this.game.size);
 
       this.element.addClass("game-over");
 
       const figcaption = document.createElement("FIGCAPTION");
-
-      // if (winner) {
-      //   this.$el.addClass(`winner-${winner}`);
-      //   $figcaption.html(`You win, ${winner}!`);
-      // } else {
-      //   $figcaption.html("It's a draw!");
-      // }
-
+      figcaption.innerText = "Game Over";
       this.element.append(figcaption);
+
+    } else if (this.game.isWon()) {
+
+      [].forEach.call(document.getElementsByClassName('hidden'), function(el) {
+        el.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+        });
+      });
+
+      this.element.addClass("game-won");
+      const figcaption = document.createElement("FIGCAPTION");
+      figcaption.innerText = "You Won!";
+      this.element.append(figcaption);
+
+    } else {
+
+      let bombCount = this.game.countNeighbors(pos);
+      this.renderTile(pos, bombCount);
     }
+
   }
 
-  renderTile(pos, content) {
+  renderTile(pos) {
     let [x,y] = pos;
     let newChild = document.querySelectorAll(`li[pos='${x},${y}']`);
 
     newChild[0].className = "revealed";
-    newChild[0].innerText = content;
+    newChild[0].innerText = this.game.grid[x][y].content;
 
   }
 
@@ -203,7 +236,7 @@ class View {
     }
   }
 
-  renderBoard(size, content) {
+  renderBoard(size) {
     this.clearBoard();
     let grid = document.getElementById("minesweeper");
     let solution = this.game.grid;
@@ -214,9 +247,15 @@ class View {
       grid.appendChild(ul);
       for (let col=0; ul.childElementCount < size; col++) {
         let li = document.createElement('li');
-        // let name;
-        solution[row][col].revealed ? li.className = "revealed" : li.className = "hidden";
+
         li.setAttribute('pos', `${row},${col}`);
+
+        if (solution[row][col].revealed) {
+          li.className = "revealed";
+          li.innerText = solution[row][col].content;
+        } else {
+          li.className = "hidden";
+        }
 
         ul.appendChild(li);
       }
@@ -238,24 +277,7 @@ class View {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__board__ = __webpack_require__(3);
 
 
-// Game class is responsible for the gameplay (LEVEL levels, timer, starting and stopping a game).
-
-// +start()
-// +stop()
-// -startTimer()
-// -stopTimer()
-// -resetTimer()
-// -reveal()
-// - clear board
-// - redraw board
-
-// start easy game. call easy game, easy goes into constructor.
-
-// let game = new Game()
-// $easyButton.addEventLIstener('click', () => game.start('easy'));
-
-
-const DIFFICULTY = {'beginner': 8, 'intermediate': 16, 'difficult':24};
+const DIFFICULTY = {'beginner': 8, 'intermediate': 12, 'difficult':16};
 
 class Game {
   constructor(level = 'beginner') {
@@ -266,6 +288,9 @@ class Game {
     this.grid = this.board.grid;
     this.playMove = this.playMove.bind(this);
     this.countNeighbors = this.countNeighbors.bind(this);
+    this.isWon = this.isWon.bind(this);
+    this.isOver = this.isOver.bind(this);
+    this.reveal = this.reveal.bind(this);
     console.log(this.board.locations);
   }
 
@@ -273,26 +298,28 @@ class Game {
     let grid = this.grid;
     let count = 0;
     let merged = [].concat.apply([], this.grid);
-    merged.forEach(function(pos) {
-      let [x,y] = pos;
-      if (grid[x][y].revealed && !grid[x][y].bomb) {
+    merged.forEach(function(tileObj) {
+      if (tileObj.revealed && !tileObj.bomb) {
         count += 1;
       }
     });
-    return ((this.size * this.size) - this.board.bombs === count);
+    let result = ((this.size * this.size) - this.board.bombs === count);
   }
 
   isOver() {
     let locations = this.board.locations;
     let grid = this.grid;
+    let over = false;
 
     locations.forEach(function(pos) {
       let [x,y] = pos;
+
       if (grid[x][y].revealed && grid[x][y].bomb) {
-        return true;
+        over = true;
       }
     });
 
+    return over;
   }
 
   playMove(pos) {
@@ -311,7 +338,13 @@ class Game {
         count += 1;
       }
     });
-    return count;
+
+    let [a,b] = pos;
+    grid[a][b].content = count;
+  }
+
+  reveal() {
+    this.board.reveal(this.grid);
   }
 
 
@@ -361,29 +394,6 @@ class Game {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_unless__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_unless___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_unless__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__tile__ = __webpack_require__(5);
-
-
-
-
-// I think you should have a Tile class; there's a lot of information to track about a Tile (bombed? flagged? revealed?) and some helpful methods you could write (#reveal, #neighbors, #neighbor_bomb_count). I would also have a Board class.
-
-// robber goes into house. left traps for robbers. clues for how many traps there are in surrounding area.
-
-// -boardData
-//
-// - drawBoard()
-// - plantMines()
-// - calculateDistance()
-// - transverseBoard()
-// - revealBoard()
-// - isGameOver()
-// + reveal()
-// + flag()
-
-// Board class is responsible for drawing a board, planting mines, calculating mine distance, traversing the board and revealing fields.
 
 const NEIGHBORS = [
     [-1, -1],
@@ -400,10 +410,10 @@ class Board {
   constructor(size) {
     this.size = size;
 
-    if (size === 24) {
-      this.bombs = 99;
-    } else if (size === 16) {
+    if (size === 16) {
       this.bombs = 40;
+    } else if (size === 12) {
+      this.bombs = 22;
     } else {
       this.bombs = 10;
     }
@@ -412,6 +422,7 @@ class Board {
     this.makeGrid(size);
     this.setBombs = this.setBombs.bind(this);
     this.neighbors = this.neighbors.bind(this);
+    this.reveal = this.reveal.bind(this);
   }
 
   compareArr(nestedArr, arr2) {
@@ -452,7 +463,7 @@ class Board {
     for (let row=0; this.grid.length < size; row++) {
       this.grid.push([]);
       for (let col=0; this.grid[row].length < size; col++) {
-        this.grid[row].push({revealed: false, bomb: false, flagged: false, marked: false});
+        this.grid[row].push({revealed: false, bomb: false, flagged: false, marked: false, content: ""});
       }
     }
 
@@ -480,85 +491,13 @@ class Board {
     this.locations.forEach(function(pos) {
       let [x,y] = pos;
       grid[x][y].revealed = true;
+      grid[x][y].content = "X";
     });
   }
 
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (Board);
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-module.exports = function(test, fn) {
-  'use strict';
-  if (Object.prototype.toString.call(arguments[1]) !== '[object Function]')
-    throw new Error('Callback argument must be a function');
-  if (!test) fn();
-};
-
-
-/***/ }),
-/* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-
-// CHECK MOVE ===========
-// +element
-// + x
-// + y
-// + isFlagged
-// - isRevealed
-// + isMine
-// + isEmpty    neighbor_bomb_count + neighbors
-// ================
-
-// PLAYER =======
-// + setFlagged()
-// + setRevealed()
-// + setEmpty()
-// + setMine()
-// + setMineCount()   neighbor_bomb_count
-// + setText()
-//
-// ===============
-
-
-// Field class represents single field on the board and provides all operations on a field that we need.
-
-const NEIGHBORS = [
-    [-1, -1],
-    [-1,  0],
-    [-1,  1],
-    [ 0, -1],
-    [ 0,  1],
-    [ 1, -1],
-    [ 1,  0],
-    [ 1,  1]
-  ];
-
-
-class Tile {
-  constructor() {
-
-  }
-
-  countNeighbors(pos) {
-    let count = 0;
-
-    NEIGHBORS.forEach(function(neighbor) {
-      neighbor;
-    })
-  }
-
-
-
-}
-
-/* unused harmony default export */ var _unused_webpack_default_export = (Tile);
 
 
 /***/ })

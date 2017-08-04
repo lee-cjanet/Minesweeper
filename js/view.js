@@ -7,6 +7,22 @@ class View {
     this.bindEvents();
   }
 
+  countdown() {
+    var seconds = 180;
+    function tick() {
+      let counter = document.getElementById("counter");
+      seconds--;
+      counter.innerHTML =
+        "0:" + (seconds < 10 ? "0" : "") +  String(seconds);
+        if( seconds > 0 ) {
+          setTimeout(tick, 1000);
+        } else {
+          alert("Game over");
+          return;
+        }
+      }
+      tick();
+  }
 
 
   bindEvents() {
@@ -25,7 +41,8 @@ class View {
   makeMove(tile) {
     let string = tile.getAttribute("pos");
     let pos = JSON.parse("[" + string + "]");
-    console.log(this.game);
+
+    this.countdown();
 
     try {
       this.game.playMove(pos);
@@ -34,39 +51,52 @@ class View {
       return;
     }
 
-    // tile.addClass(currentPlayer);
+    if (this.game.isOver()) {
 
-    if (!this.game.isOver() || !this.game.isWon()) {
-      let bombCount = this.game.countNeighbors(pos);
-      this.renderTile(pos, bombCount);
-    } else if (this.game.isOver()) {
-      // cleanup click handlers.
-      // this.elementdocument.getElementById('div1').onmousedown = new function ("return false");
-      document.getElementsByTagName('ul').addEventListener('click', function(e) {
-        e.preventDefault();
+      [].forEach.call(document.getElementsByClassName('hidden'), function(el) {
+        el.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+        });
       });
+
+      this.game.reveal();
+      this.renderBoard(this.game.size);
 
       this.element.addClass("game-over");
 
       const figcaption = document.createElement("FIGCAPTION");
-
-      // if (winner) {
-      //   this.$el.addClass(`winner-${winner}`);
-      //   $figcaption.html(`You win, ${winner}!`);
-      // } else {
-      //   $figcaption.html("It's a draw!");
-      // }
-
+      figcaption.innerText = "Game Over";
       this.element.append(figcaption);
+
+    } else if (this.game.isWon()) {
+
+      [].forEach.call(document.getElementsByClassName('hidden'), function(el) {
+        el.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+        });
+      });
+
+      this.element.addClass("game-won");
+      const figcaption = document.createElement("FIGCAPTION");
+      figcaption.innerText = "You Won!";
+      this.element.append(figcaption);
+
+    } else {
+
+      let bombCount = this.game.countNeighbors(pos);
+      this.renderTile(pos, bombCount);
     }
+
   }
 
-  renderTile(pos, content) {
+  renderTile(pos) {
     let [x,y] = pos;
     let newChild = document.querySelectorAll(`li[pos='${x},${y}']`);
 
     newChild[0].className = "revealed";
-    newChild[0].innerText = content;
+    newChild[0].innerText = this.game.grid[x][y].content;
 
   }
 
@@ -77,7 +107,7 @@ class View {
     }
   }
 
-  renderBoard(size, content) {
+  renderBoard(size) {
     this.clearBoard();
     let grid = document.getElementById("minesweeper");
     let solution = this.game.grid;
@@ -88,9 +118,15 @@ class View {
       grid.appendChild(ul);
       for (let col=0; ul.childElementCount < size; col++) {
         let li = document.createElement('li');
-        // let name;
-        solution[row][col].revealed ? li.className = "revealed" : li.className = "hidden";
+
         li.setAttribute('pos', `${row},${col}`);
+
+        if (solution[row][col].revealed) {
+          li.className = "revealed";
+          li.innerText = solution[row][col].content;
+        } else {
+          li.className = "hidden";
+        }
 
         ul.appendChild(li);
       }

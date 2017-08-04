@@ -6,6 +6,9 @@
     <title>Sweep for Mines</title>
     <link rel="stylesheet" type="text/css" href="./css/application.scss">
     <script type="text/javascript" src="./bundle.js"></script>
+    <script type="text/javascript"> function dropDownMenu() {
+        document.getElementById("myDropdown").classList.toggle("show");
+    } </script>
 
   </head>
 
@@ -13,17 +16,30 @@
 
     <h1>Sweep for Mines</h1>
 
-    <!-- https://www.w3schools.com/howto/howto_js_dropdown.asp -->
-    <!-- <div class="dropdown">
-      <button onclick="DropDownToggle()" class="dropbtn">Level</button>
+    <div class="dropdown">
+      <button onclick="dropDownMenu()" class="dropbtn">Level</button>
       <div id="myDropdown" class="dropdown-content">
-        <a id="beginner">Beginner</a>
-        <a id="intermediate">Intermediate</a>
-        <a id="difficult">Difficult</a>
+        <button onclick="" id="beginner">Beginner</button>
+        <button onclick="" id="intermediate">Intermediate</button>
+        <button onclick="" id="difficult">Difficult</button>
       </div>
-    </div> -->
+    </div>
+
+    <span id="counter"> 00:00:00 </span>
 
     <figure id="minesweeper"></figure>
 
   </body>
 </html>
+
+<!-- <a href="#" target="_blank" id="beginner" onclick="javascript:Test('Test');">Google Chrome</a> -->
+
+
+<!-- <a href='#' target="_blank" id="beginner" onclick="createNewGame('beginner')">Beginner</a>
+<a href='#' target="_blank" id="intermediate" onclick="createNewGame('intermediate')">Intermediate</a>
+<a href='#' target="_blank" id="difficult" onclick="createNewGame('difficult')">Difficult</a>
+
+
+<button onclick="createNewGame('beginner')" class="beginner">Beginner</button>
+<button onclick="createNewGame('intermediate')" class="dropbtn">Intermediate</button>
+<button onclick="createNewGame('difficult')" class="dropbtn">Difficult</button> -->

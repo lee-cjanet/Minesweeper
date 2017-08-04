@@ -1,23 +1,3 @@
-import unless from 'unless';
-
-import Tile from './tile';
-
-// I think you should have a Tile class; there's a lot of information to track about a Tile (bombed? flagged? revealed?) and some helpful methods you could write (#reveal, #neighbors, #neighbor_bomb_count). I would also have a Board class.
-
-// robber goes into house. left traps for robbers. clues for how many traps there are in surrounding area.
-
-// -boardData
-//
-// - drawBoard()
-// - plantMines()
-// - calculateDistance()
-// - transverseBoard()
-// - revealBoard()
-// - isGameOver()
-// + reveal()
-// + flag()
-
-// Board class is responsible for drawing a board, planting mines, calculating mine distance, traversing the board and revealing fields.
 
 const NEIGHBORS = [
     [-1, -1],
@@ -34,10 +14,10 @@ class Board {
   constructor(size) {
     this.size = size;
 
-    if (size === 24) {
-      this.bombs = 99;
-    } else if (size === 16) {
+    if (size === 16) {
       this.bombs = 40;
+    } else if (size === 12) {
+      this.bombs = 22;
     } else {
       this.bombs = 10;
     }
@@ -46,6 +26,7 @@ class Board {
     this.makeGrid(size);
     this.setBombs = this.setBombs.bind(this);
     this.neighbors = this.neighbors.bind(this);
+    this.reveal = this.reveal.bind(this);
   }
 
   compareArr(nestedArr, arr2) {
@@ -86,7 +67,7 @@ class Board {
     for (let row=0; this.grid.length < size; row++) {
       this.grid.push([]);
       for (let col=0; this.grid[row].length < size; col++) {
-        this.grid[row].push({revealed: false, bomb: false, flagged: false, marked: false});
+        this.grid[row].push({revealed: false, bomb: false, flagged: false, marked: false, content: ""});
       }
     }
 
@@ -114,6 +95,7 @@ class Board {
     this.locations.forEach(function(pos) {
       let [x,y] = pos;
       grid[x][y].revealed = true;
+      grid[x][y].content = "X";
     });
   }
 

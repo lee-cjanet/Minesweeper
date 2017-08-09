@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Slabo+27px');
 
-@import './reset.scss';
+@import './reset.css';
 
-@import './board.scss';
-@import './dropdown_menu.scss';
+@import './board.css';
+@import './dropdown_menu.css';
 
 body {
   width: 100vw;

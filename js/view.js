@@ -8,22 +8,22 @@ class View {
     this.movesCounter = this.movesCounter.bind(this);
   }
 
-  // countdown() {
-  //   var seconds = 180;
-  //   function tick() {
-  //     let counter = document.getElementById("counter");
-  //     seconds--;
-  //     counter.innerHTML =
-  //       "0:" + (seconds < 10 ? "0" : "") +  String(seconds);
-  //       if( seconds > 0 ) {
-  //         setTimeout(tick, 1000);
-  //       } else {
-  //         alert("Game over");
-  //         return;
-  //       }
-  //     }
-  //     tick();
-  // }
+  countdown() {
+    var seconds = 0;
+    function tick() {
+      let counter = document.getElementById("counter");
+      seconds++;
+      counter.innerHTML =
+        "0:" + (seconds < 10 ? "0" : "") +  String(seconds);
+        if( seconds > 0 ) {
+          setTimeout(tick, 1000);
+        } else {
+          alert("Game over");
+          return;
+        }
+      }
+      tick();
+  }
 
   movesCounter() {
     let counter = document.getElementById("moves-counter");
